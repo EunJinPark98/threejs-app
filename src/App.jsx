@@ -49,6 +49,7 @@ function App() {
 
   const handleStartDelete = () => {
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
+     setOriginalConnections(JSON.parse(JSON.stringify(connections)));
     setDeleteMode(true);
     setMoveMode(false);
     setConnectMode(false);
@@ -89,6 +90,7 @@ function App() {
       label: `T_STL_${boxes.length + 1}`
     };
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
+     setOriginalConnections(JSON.parse(JSON.stringify(connections)));
     setBoxes([...boxes, newBox]);
     setMoveMode(true);
     setDeleteMode(false);
