@@ -1,10 +1,9 @@
-// CanvasView.jsx
 import React, { useRef, useEffect } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Edges, Text, TransformControls } from '@react-three/drei';
 import * as THREE from 'three';
 
-const DraggableBox = ({ box, onChangePosition, onDelete, moveMode, deleteMode }) => {
+const DraggableBox = ({ box, onChangePosition, onDelete, moveMode, deleteMode, onClick, isSelected }) => {
   const meshRef = useRef();
   const transformRef = useRef();
   const { camera, gl } = useThree();
@@ -42,11 +41,13 @@ const DraggableBox = ({ box, onChangePosition, onDelete, moveMode, deleteMode })
           e.stopPropagation();
           if (deleteMode) {
             onDelete(box.id);
+          } else if (onClick) {
+            onClick(box.id);
           }
         }}
       >
         <boxGeometry args={[1.5, 0.3, 1.2]} />
-        <meshBasicMaterial color="#ffffff" />
+        <meshBasicMaterial color={isSelected ? 'red' : '#ffffff'} />
         <Edges scale={1.01} threshold={15} color="black" />
       </mesh>
 
@@ -138,7 +139,17 @@ const VerticalStack = ({ basePosition, count = 4 }) => (
   </>
 );
 
-const CanvasView = ({ boxes, setBoxes, moveMode, deleteMode, orbitEnabled }) => {
+const CanvasView = ({
+  boxes,
+  setBoxes,
+  moveMode,
+  deleteMode,
+  orbitEnabled,
+  connectMode,
+  onBoxClick,
+  connections,
+  selectedBoxes
+}) => {
   const handleChangePosition = (id, newPosition) => {
     setBoxes((prev) =>
       prev.map((box) =>
@@ -158,6 +169,7 @@ const CanvasView = ({ boxes, setBoxes, moveMode, deleteMode, orbitEnabled }) => 
         <directionalLight position={[5, 10, 5]} intensity={1} />
         <pointLight position={[10, 10, 10]} intensity={0.5} />
 
+        {/* 박스 + 스택 */}
         {boxes.map((box) => (
           <React.Fragment key={box.id}>
             <DraggableBox
@@ -166,23 +178,25 @@ const CanvasView = ({ boxes, setBoxes, moveMode, deleteMode, orbitEnabled }) => 
               deleteMode={deleteMode}
               onChangePosition={handleChangePosition}
               onDelete={handleDelete}
+              onClick={onBoxClick}
+              isSelected={selectedBoxes.includes(box.id)}
             />
             <VerticalStack basePosition={box.position} />
           </React.Fragment>
         ))}
 
-        {boxes.length >= 2 && (
-          <>
-            <ConnectingBar start={boxes[0].position} end={boxes[1].position} />
-            <FlowingCircles start={boxes[0].position} end={boxes[1].position} />
-          </>
-        )}
-        {boxes.length >= 3 && (
-          <>
-            <ConnectingBar start={boxes[1].position} end={boxes[2].position} />
-            <FlowingCircles start={boxes[1].position} end={boxes[2].position} />
-          </>
-        )}
+        {/* 연결된 박스들 */}
+        {connections.map(([id1, id2], idx) => {
+          const startBox = boxes.find((b) => b.id === id1);
+          const endBox = boxes.find((b) => b.id === id2);
+          if (!startBox || !endBox) return null;
+          return (
+            <React.Fragment key={idx}>
+              <ConnectingBar start={startBox.position} end={endBox.position} />
+              <FlowingCircles start={startBox.position} end={endBox.position} />
+            </React.Fragment>
+          );
+        })}
 
         <OrbitControls enabled={orbitEnabled} />
       </Canvas>

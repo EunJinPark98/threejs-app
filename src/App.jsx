@@ -12,43 +12,72 @@ const defaultBoxes = [
   { id: 'c', position: [2, 0, 0], label: 'T_STL_C' }
 ];
 
+
 function App() {
   const [boxes, setBoxes] = useState([]);
   const [originalBoxes, setOriginalBoxes] = useState([]);
+  const [originalConnections, setOriginalConnections] = useState([]);
   const [moveMode, setMoveMode] = useState(false);
   const [deleteMode, setDeleteMode] = useState(false);
+  const [connectMode, setConnectMode] = useState(false);
+
+  const [connections, setConnections] = useState([]);
+  const [selectedBoxes, setSelectedBoxes] = useState([]);
 
   useEffect(() => {
-    const saved = localStorage.getItem('boxes');
-    if (saved) {
-      setBoxes(JSON.parse(saved));
+    const savedBoxes = localStorage.getItem('boxes');
+    const savedConnections = localStorage.getItem('connections');
+
+    if (savedBoxes) {
+      setBoxes(JSON.parse(savedBoxes));
     } else {
       setBoxes(defaultBoxes);
+    }
+
+    if (savedConnections) {
+      setConnections(JSON.parse(savedConnections));
     }
   }, []);
 
   const handleStartMove = () => {
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
+     setOriginalConnections(JSON.parse(JSON.stringify(connections)));
     setMoveMode(true);
     setDeleteMode(false);
+    setConnectMode(false);
   };
 
   const handleStartDelete = () => {
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
     setDeleteMode(true);
     setMoveMode(false);
+    setConnectMode(false);
+  };
+
+  const handleAddConnect = () => {
+    setConnectMode(true);
+    setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
+    setMoveMode(false);
+    setDeleteMode(false);
+    setSelectedBoxes([]);
   };
 
   const handleSave = () => {
     localStorage.setItem('boxes', JSON.stringify(boxes));
+    localStorage.setItem('connections', JSON.stringify(connections));
     setMoveMode(false);
     setDeleteMode(false);
+    setConnectMode(false);
+    setSelectedBoxes([]);
   };
 
   const handleCancel = () => {
     setBoxes(originalBoxes);
+    setConnections(originalConnections);
     setMoveMode(false);
     setDeleteMode(false);
+    setConnectMode(false);
+    setSelectedBoxes([]);
   };
 
   const handleAddBox = () => {
@@ -63,6 +92,25 @@ function App() {
     setBoxes([...boxes, newBox]);
     setMoveMode(true);
     setDeleteMode(false);
+    setConnectMode(false);
+  };
+
+  const handleBoxClick = (id) => {
+    if (!connectMode) return;
+
+    setSelectedBoxes((prev) => {
+      if (prev.includes(id)) return prev;
+      const newSelection = [...prev, id];
+
+      if (newSelection.length === 2) {
+        setTimeout(() => {
+          setConnections((prevConns) => [...prevConns, [newSelection[0], newSelection[1]]]);
+          setSelectedBoxes([]);
+        }, 300); // 빨간색 잠깐 보여주기
+      }
+
+      return newSelection;
+    });
   };
 
   return (
@@ -75,23 +123,31 @@ function App() {
           setBoxes={setBoxes}
           moveMode={moveMode}
           deleteMode={deleteMode}
-          orbitEnabled={!moveMode} // ⛔ 이동모드일 때 OrbitControls 비활성화
+          orbitEnabled={!moveMode}
+          connectMode={connectMode}
+          onBoxClick={handleBoxClick}
+          connections={connections}
+          selectedBoxes={selectedBoxes}
         />
         <RightPanel
           moveMode={moveMode}
           deleteMode={deleteMode}
+          connectMode={connectMode}
           onStartMove={handleStartMove}
+          onConnect={handleAddConnect}
           onStartDelete={handleStartDelete}
           onAddBox={handleAddBox}
           onSave={handleSave}
           onCancel={handleCancel}
         />
       </div>
-      {(moveMode || deleteMode) && (
+
+      {(moveMode || deleteMode || connectMode) && (
         <div className="mask-overlay">
           <div className="mask-text">
             {moveMode && '📦 박스를 드래그해서 이동 후 저장 또는 취소하세요'}
             {deleteMode && '❌ 삭제할 박스를 클릭하세요'}
+            {connectMode && '🔗 연결할 박스 2개를 클릭하세요'}
           </div>
         </div>
       )}
