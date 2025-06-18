@@ -113,11 +113,21 @@ function App() {
     });
   };
 
+  const handleRenameBox = (id, newLabel) => {
+  const updatedBoxes = boxes.map((box) =>
+    box.id === id ? { ...box, label: newLabel } : box
+  );
+  setBoxes(updatedBoxes);
+  localStorage.setItem('boxes', JSON.stringify(updatedBoxes));
+};
+
   return (
     <div className="app">
       <TopBar />
       <div className="main">
-        <SideMenu />
+        <SideMenu
+          boxes={boxes}
+          onRenameBox={handleRenameBox} />
         <CanvasView
           boxes={boxes}
           setBoxes={setBoxes}
