@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/EunJinPark98/threejs-app.git/static/css/main.77efbd73.css",
-    "main.js": "/EunJinPark98/threejs-app.git/static/js/main.802cc0fe.js",
-    "static/js/453.f2613043.chunk.js": "/EunJinPark98/threejs-app.git/static/js/453.f2613043.chunk.js",
-    "index.html": "/EunJinPark98/threejs-app.git/index.html",
-    "main.77efbd73.css.map": "/EunJinPark98/threejs-app.git/static/css/main.77efbd73.css.map",
-    "main.802cc0fe.js.map": "/EunJinPark98/threejs-app.git/static/js/main.802cc0fe.js.map",
-    "453.f2613043.chunk.js.map": "/EunJinPark98/threejs-app.git/static/js/453.f2613043.chunk.js.map"
+    "main.css": "/EunJinPark98/threejs-app/static/css/main.77efbd73.css",
+    "main.js": "/EunJinPark98/threejs-app/static/js/main.4c197827.js",
+    "static/js/453.f2613043.chunk.js": "/EunJinPark98/threejs-app/static/js/453.f2613043.chunk.js",
+    "index.html": "/EunJinPark98/threejs-app/index.html",
+    "main.77efbd73.css.map": "/EunJinPark98/threejs-app/static/css/main.77efbd73.css.map",
+    "main.4c197827.js.map": "/EunJinPark98/threejs-app/static/js/main.4c197827.js.map",
+    "453.f2613043.chunk.js.map": "/EunJinPark98/threejs-app/static/js/453.f2613043.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.77efbd73.css",
-    "static/js/main.802cc0fe.js"
+    "static/js/main.4c197827.js"
   ]
 }
