@@ -58,6 +58,7 @@ function App() {
   const handleAddConnect = () => {
     setConnectMode(true);
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
+     setOriginalConnections(JSON.parse(JSON.stringify(connections)));
     setMoveMode(false);
     setDeleteMode(false);
     setSelectedBoxes([]);
@@ -123,16 +124,9 @@ function App() {
   localStorage.setItem('boxes', JSON.stringify(updatedBoxes));
 };
 
-  //TopBar.jsx 카메라 무빙
-  const [cameraDirection, setCameraDirection] = useState(null);
-
-  const handleMoveCamera = (dir) => {
-    setCameraDirection(dir);
-  };
-
   return (
     <div className="app">
-      <TopBar onMoveCamera={handleMoveCamera}/>
+      <TopBar />
       <div className="main">
         <SideMenu
           boxes={boxes}
@@ -147,8 +141,7 @@ function App() {
           onBoxClick={handleBoxClick}
           connections={connections}
           selectedBoxes={selectedBoxes}
-          cameraDirection={cameraDirection}
-          setCameraDirection={setCameraDirection}
+          setConnections={setConnections}
         />
         <RightPanel
           moveMode={moveMode}
@@ -167,7 +160,7 @@ function App() {
         <div className="mask-overlay">
           <div className="mask-text">
             {moveMode && '📦 박스를 드래그해서 이동 후 저장 또는 취소하세요'}
-            {deleteMode && '❌ 삭제할 박스를 클릭하세요'}
+            {deleteMode && '❌ 삭제할 박스나 연결바를 클릭하세요'}
             {connectMode && '🔗 연결할 박스 2개를 클릭하세요'}
           </div>
         </div>

@@ -65,7 +65,7 @@ const DraggableBox = ({ box, onChangePosition, onDelete, moveMode, deleteMode, o
   );
 };
 
-const ConnectingBar = ({ start, end }) => {
+const ConnectingBar = ({ start, end, onDelete }) => {
   const startVec = new THREE.Vector3(...start);
   const endVec = new THREE.Vector3(...end);
   const mid = new THREE.Vector3().addVectors(startVec, endVec).multiplyScalar(0.5);
@@ -77,7 +77,14 @@ const ConnectingBar = ({ start, end }) => {
   );
 
   return (
-    <mesh position={mid} quaternion={quaternion}>
+    <mesh 
+      position={mid}
+      quaternion={quaternion}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (onDelete) onDelete(); // 연결바 삭제 요청
+      }}
+    >
       <cylinderGeometry args={[0.1, 0.1, length, 16]} />
       <meshBasicMaterial color="black" transparent opacity={0.2} />
     </mesh>
@@ -139,36 +146,6 @@ const VerticalStack = ({ basePosition, count = 4 }) => (
   </>
 );
 
-// CameraMover 컴포넌트 정의
-
-const CameraMover = ({ direction, setDirection, controlsRef }) => {
-  const { camera } = useThree();
-
-  useEffect(() => {
-    if (!direction || !controlsRef.current) return;
-
-    const step = 1;
-    const moveVec = new THREE.Vector3();
-
-    switch (direction) {
-      case 'up':    moveVec.set(0, 0, -step); break;
-      case 'down':  moveVec.set(0, 0, step); break;
-      case 'left':  moveVec.set(-step, 0, 0); break;
-      case 'right': moveVec.set(step, 0, 0); break;
-      default: return;
-    }
-
-    camera.position.add(moveVec);
-    controlsRef.current.target.add(moveVec); // 👈 이게 핵심!
-    setDirection(null);
-  }, [direction]);
-
-  return null;
-};
-
-
-
-
 
 const CanvasView = ({
   boxes,
@@ -180,11 +157,8 @@ const CanvasView = ({
   onBoxClick,
   connections,
   selectedBoxes,
-  cameraDirection,
-  setCameraDirection
+  setConnections
 }) => {
- const controlsRef = useRef();
-
   const handleChangePosition = (id, newPosition) => {
     setBoxes((prev) =>
       prev.map((box) =>
@@ -225,23 +199,23 @@ const CanvasView = ({
           const startBox = boxes.find((b) => b.id === id1);
           const endBox = boxes.find((b) => b.id === id2);
           if (!startBox || !endBox) return null;
+
+          const handleDeleteConnection = () => {
+            if (!deleteMode) return;
+            setConnections((prev) =>
+              prev.filter(([a, b]) => !(a === id1 && b === id2))
+            );
+          };
+
           return (
             <React.Fragment key={idx}>
-              <ConnectingBar start={startBox.position} end={endBox.position} />
+              <ConnectingBar start={startBox.position} end={endBox.position} onDelete={handleDeleteConnection}/>
               <FlowingCircles start={startBox.position} end={endBox.position} />
             </React.Fragment>
           );
         })}
 
-        {/* 카메라 이동 */}
-         <CameraMover
-          direction={cameraDirection}
-          setDirection={setCameraDirection}
-          controlsRef={controlsRef}
-        />
-
         <OrbitControls enabled={orbitEnabled} />
-        <OrbitControls ref={controlsRef} />
       </Canvas>
     </div>
   );
