@@ -90,7 +90,7 @@ function App() {
       label: `T_STL_${boxes.length + 1}`
     };
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
-     setOriginalConnections(JSON.parse(JSON.stringify(connections)));
+    localStorage.setItem('connections', JSON.stringify(connections));
     setBoxes([...boxes, newBox]);
     setMoveMode(true);
     setDeleteMode(false);
@@ -123,9 +123,16 @@ function App() {
   localStorage.setItem('boxes', JSON.stringify(updatedBoxes));
 };
 
+  //TopBar.jsx 카메라 무빙
+  const [cameraDirection, setCameraDirection] = useState(null);
+
+  const handleMoveCamera = (dir) => {
+    setCameraDirection(dir);
+  };
+
   return (
     <div className="app">
-      <TopBar />
+      <TopBar onMoveCamera={handleMoveCamera}/>
       <div className="main">
         <SideMenu
           boxes={boxes}
@@ -140,6 +147,8 @@ function App() {
           onBoxClick={handleBoxClick}
           connections={connections}
           selectedBoxes={selectedBoxes}
+          cameraDirection={cameraDirection}
+          setCameraDirection={setCameraDirection}
         />
         <RightPanel
           moveMode={moveMode}

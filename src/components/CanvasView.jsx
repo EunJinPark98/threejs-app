@@ -139,6 +139,37 @@ const VerticalStack = ({ basePosition, count = 4 }) => (
   </>
 );
 
+// CameraMover 컴포넌트 정의
+
+const CameraMover = ({ direction, setDirection, controlsRef }) => {
+  const { camera } = useThree();
+
+  useEffect(() => {
+    if (!direction || !controlsRef.current) return;
+
+    const step = 1;
+    const moveVec = new THREE.Vector3();
+
+    switch (direction) {
+      case 'up':    moveVec.set(0, 0, -step); break;
+      case 'down':  moveVec.set(0, 0, step); break;
+      case 'left':  moveVec.set(-step, 0, 0); break;
+      case 'right': moveVec.set(step, 0, 0); break;
+      default: return;
+    }
+
+    camera.position.add(moveVec);
+    controlsRef.current.target.add(moveVec); // 👈 이게 핵심!
+    setDirection(null);
+  }, [direction]);
+
+  return null;
+};
+
+
+
+
+
 const CanvasView = ({
   boxes,
   setBoxes,
@@ -148,8 +179,12 @@ const CanvasView = ({
   connectMode,
   onBoxClick,
   connections,
-  selectedBoxes
+  selectedBoxes,
+  cameraDirection,
+  setCameraDirection
 }) => {
+ const controlsRef = useRef();
+
   const handleChangePosition = (id, newPosition) => {
     setBoxes((prev) =>
       prev.map((box) =>
@@ -198,7 +233,15 @@ const CanvasView = ({
           );
         })}
 
+        {/* 카메라 이동 */}
+         <CameraMover
+          direction={cameraDirection}
+          setDirection={setCameraDirection}
+          controlsRef={controlsRef}
+        />
+
         <OrbitControls enabled={orbitEnabled} />
+        <OrbitControls ref={controlsRef} />
       </Canvas>
     </div>
   );
