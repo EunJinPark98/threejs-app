@@ -7,9 +7,9 @@ import RightPanel from './components/RightPanel';
 import CanvasView from './components/CanvasView';
 
 const defaultBoxes = [
-  { id: 'a', position: [-2, 0, 0], label: 'T_STL_A' },
-  { id: 'b', position: [0, 0, 0], label: 'T_STL_B' },
-  { id: 'c', position: [2, 0, 0], label: 'T_STL_C' }
+  { id: 'a', position: [-2, 0, 0], label: 'T_STL_A', stackLabels: ["", "", "", ""] },
+  { id: 'b', position: [0, 0, 0], label: 'T_STL_B', stackLabels: ["", "", "", ""] },
+  { id: 'c', position: [2, 0, 0], label: 'T_STL_C', stackLabels: ["", "", "", ""] }
 ];
 
 
@@ -88,7 +88,8 @@ function App() {
     const newBox = {
       id: Date.now().toString(),
       position: [maxX + spacing, 0, 0],
-      label: `T_STL_${boxes.length + 1}`
+      label: `T_STL_${boxes.length + 1}`,
+      stackLabels: ["", "", "", ""] // ✅ 무조건 초기화!
     };
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
     localStorage.setItem('connections', JSON.stringify(connections));
@@ -117,12 +118,26 @@ function App() {
   };
 
   const handleRenameBox = (id, newLabel) => {
-  const updatedBoxes = boxes.map((box) =>
-    box.id === id ? { ...box, label: newLabel } : box
-  );
-  setBoxes(updatedBoxes);
-  localStorage.setItem('boxes', JSON.stringify(updatedBoxes));
-};
+    const updatedBoxes = boxes.map((box) =>
+      box.id === id ? { ...box, label: newLabel } : box
+    );
+    setBoxes(updatedBoxes);
+    localStorage.setItem('boxes', JSON.stringify(updatedBoxes));
+  };
+
+  const handleUpdateStackLabel = (boxId, index, newText) => {
+    const updatedBoxes = boxes.map(box => {
+      if (box.id !== boxId) return box;
+
+      const updatedLabels = [...(box.stackLabels || ["", "", "", ""])];
+      updatedLabels[index] = newText;
+
+      return { ...box, stackLabels: updatedLabels };
+    });
+
+    setBoxes(updatedBoxes);
+    localStorage.setItem('boxes', JSON.stringify(updatedBoxes));
+  };
 
   return (
     <div className="app">
@@ -142,6 +157,7 @@ function App() {
           connections={connections}
           selectedBoxes={selectedBoxes}
           setConnections={setConnections}
+          handleUpdateStackLabel={handleUpdateStackLabel}
         />
         <RightPanel
           moveMode={moveMode}

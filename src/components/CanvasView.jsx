@@ -54,7 +54,7 @@ const DraggableBox = ({ box, onChangePosition, onDelete, moveMode, deleteMode, o
       <Text
         position={[box.position[0], box.position[1] + 0.16, box.position[2]]}
         rotation={[-Math.PI / 2, 0, 0]}
-        fontSize={0.3}
+        fontSize={0.2}
         color="black"
         anchorX="center"
         anchorY="bottom"
@@ -65,6 +65,7 @@ const DraggableBox = ({ box, onChangePosition, onDelete, moveMode, deleteMode, o
   );
 };
 
+//연결바
 const ConnectingBar = ({ start, end, onDelete }) => {
   const startVec = new THREE.Vector3(...start);
   const endVec = new THREE.Vector3(...end);
@@ -130,21 +131,41 @@ const FlowingCircles = ({ start, end, count = 5, speed = 0.01 }) => {
   );
 };
 
-const VerticalStack = ({ basePosition, count = 4 }) => (
+//4개의 판대기
+const VerticalStack = ({ basePosition, labels = ["", "", "", ""], onEdit, boxId }) => (
   <>
-    {Array.from({ length: count }).map((_, i) => {
+    {Array.from({ length: 4 }).map((_, i) => {
       const yOffset = -0.66 - i * 1;
       const pos = [basePosition[0], basePosition[1] + yOffset, basePosition[2]];
       return (
-        <mesh key={i} position={pos}>
-          <boxGeometry args={[1, 1, 0.3]} />
-          <meshBasicMaterial color="#ffffff" />
-          <Edges scale={1.01} threshold={15} color="black" />
-        </mesh>
+        <group key={i} position={pos}>
+          <mesh
+            onDoubleClick={(e) => {
+              e.stopPropagation();
+              onEdit(boxId, i);
+            }}
+          >
+            <boxGeometry args={[1, 1, 0.3]} />
+            <meshBasicMaterial color="#ffffff" />
+            <Edges scale={1.01} threshold={15} color="black" />
+          </mesh>
+          {labels[i] && (
+            <Text
+              position={[0, 0, 0.2]}
+              fontSize={0.08}
+              color="black"
+              anchorX="center"
+              anchorY="middle"
+            >
+              {labels[i]}
+            </Text>
+          )}
+        </group>
       );
     })}
   </>
 );
+
 
 
 const CanvasView = ({
@@ -157,7 +178,8 @@ const CanvasView = ({
   onBoxClick,
   connections,
   selectedBoxes,
-  setConnections
+  setConnections,
+  handleUpdateStackLabel
 }) => {
   const handleChangePosition = (id, newPosition) => {
     setBoxes((prev) =>
@@ -190,7 +212,19 @@ const CanvasView = ({
               onClick={onBoxClick}
               isSelected={selectedBoxes.includes(box.id)}
             />
-            <VerticalStack basePosition={box.position} />
+            <VerticalStack 
+              basePosition={box.position} 
+              boxId={box.id}
+              labels={box.stackLabels || ["", "", "", ""]}
+              onEdit={(boxId, index) => {
+                const box = boxes.find(b => b.id === boxId);
+                const prev = box?.stackLabels?.[index] || "";  // ✅ 정확한 기본값
+                const newText = prompt("텍스트를 입력하세요", prev);
+                if (newText != null) {
+                  handleUpdateStackLabel(boxId, index, newText);
+                }
+              }}
+            />
           </React.Fragment>
         ))}
 
