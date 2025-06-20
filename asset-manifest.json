@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/EunJinPark98/threejs-app/static/css/main.77efbd73.css",
-    "main.js": "/EunJinPark98/threejs-app/static/js/main.4c197827.js",
-    "static/js/453.f2613043.chunk.js": "/EunJinPark98/threejs-app/static/js/453.f2613043.chunk.js",
-    "index.html": "/EunJinPark98/threejs-app/index.html",
-    "main.77efbd73.css.map": "/EunJinPark98/threejs-app/static/css/main.77efbd73.css.map",
-    "main.4c197827.js.map": "/EunJinPark98/threejs-app/static/js/main.4c197827.js.map",
-    "453.f2613043.chunk.js.map": "/EunJinPark98/threejs-app/static/js/453.f2613043.chunk.js.map"
+    "main.css": "/threejs-app/static/css/main.77efbd73.css",
+    "main.js": "/threejs-app/static/js/main.3d91457a.js",
+    "static/js/453.f2613043.chunk.js": "/threejs-app/static/js/453.f2613043.chunk.js",
+    "index.html": "/threejs-app/index.html",
+    "main.77efbd73.css.map": "/threejs-app/static/css/main.77efbd73.css.map",
+    "main.3d91457a.js.map": "/threejs-app/static/js/main.3d91457a.js.map",
+    "453.f2613043.chunk.js.map": "/threejs-app/static/js/453.f2613043.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.77efbd73.css",
-    "static/js/main.4c197827.js"
+    "static/js/main.3d91457a.js"
   ]
 }
