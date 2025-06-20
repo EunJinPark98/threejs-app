@@ -134,8 +134,8 @@ const FlowingCircles = ({ start, end, count = 5, speed = 0.01 }) => {
 //4개의 판대기
 const VerticalStack = ({ basePosition, labels = ["", "", "", ""], onEdit, boxId }) => (
   <>
-    {Array.from({ length: 4 }).map((_, i) => {
-      const yOffset = -0.66 - i * 1;
+    {Array.from({ length: 5 }).map((_, i) => {
+      const yOffset = -0.4 - i * 0.505;
       const pos = [basePosition[0], basePosition[1] + yOffset, basePosition[2]];
       return (
         <group key={i} position={pos}>
@@ -145,7 +145,7 @@ const VerticalStack = ({ basePosition, labels = ["", "", "", ""], onEdit, boxId 
               onEdit(boxId, i);
             }}
           >
-            <boxGeometry args={[1, 1, 0.3]} />
+            <boxGeometry args={[1, 0.5, 0.3]} />
             <meshBasicMaterial color="#ffffff" />
             <Edges scale={1.01} threshold={15} color="black" />
           </mesh>
