@@ -5,6 +5,7 @@ import TopBar from './components/TopBar';
 import SideMenu from './components/SideMenu';
 import RightPanel from './components/RightPanel';
 import CanvasView from './components/CanvasView';
+import { fetchBoxes } from './services/BoxService';
 
 const defaultBoxes = [
   { id: 'a', position: [-2, 0, 0], label: 'T_STL_A', stackLabels: ["", "", "", ""] },
@@ -28,6 +29,16 @@ function App() {
     const savedBoxes = localStorage.getItem('boxes');
     const savedConnections = localStorage.getItem('connections');
 
+    //스프링부트 연동 테스트
+    fetchBoxes()
+    .then(res => {
+      console.log('✅ API 응답:', res.data);
+      setBoxes(res.data);
+    })
+    .catch(err => {
+      console.error('❌ API 실패:', err);
+    });
+
     if (savedBoxes) {
       setBoxes(JSON.parse(savedBoxes));
     } else {
@@ -41,7 +52,7 @@ function App() {
 
   const handleStartMove = () => {
     setOriginalBoxes(JSON.parse(JSON.stringify(boxes)));
-     setOriginalConnections(JSON.parse(JSON.stringify(connections)));
+    setOriginalConnections(JSON.parse(JSON.stringify(connections)));
     setMoveMode(true);
     setDeleteMode(false);
     setConnectMode(false);
